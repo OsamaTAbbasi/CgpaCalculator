@@ -1,0 +1,281 @@
+<!-- FILEPATH: /d:/CodePlayGround/cgpa-calculator.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>CGPA Calculator</h1>
+        <form>
+            <div class="mb-3">
+                <label for="university" class="form-label">University</label>
+                <select class="form-select" id="university" name="university">
+                    <option selected disabled>Select a university</option>
+                    <!-- Add options for the top 10 universities in Pakistan -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="semester" class="form-label">Semester</label>
+                <select class="form-select" id="semester" name="semester" disabled>
+                    <option selected disabled>Select a semester</option>
+                    <!-- Populate with available semesters for the selected university -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="course-name" class="form-label">Course Name</label>
+                <input type="text" class="form-control" id="course-name" name="course-name" required>
+            </div>
+            <div class="mb-3">
+                <label for="credit-hours" class="form-label">Credit Hours</label>
+                <input type="number" class="form-control" id="credit-hours" name="credit-hours" required>
+            </div>
+            <div class="mb-3">
+                <label for="grade" class="form-label">Grade</label>
+                <select class="form-select" id="grade" name="grade" required>
+                    <option selected disabled>Select a grade</option>
+                    <option value="4.0">A</option>
+                    <option value="3.7">A-</option>
+                    <option value="3.3">B+</option>
+                    <option value="3.0">B</option>
+                    <option value="2.7">B-</option>
+                    <option value="2.3">C+</option>
+                    <option value="2.0">C</option>
+                    <option value="1.7">C-</option>
+                    <option value="1.3">D+</option>
+                    <option value="1.0">D</option>
+                    <option value="0.0">F</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="add-course-btn">Add Course</button>
+        </form>
+        <div id="course-list">
+            <!-- List of added courses will be displayed here -->
+        </div>
+        <button type="button" class="btn btn-success" id="calculate-cgpa-btn">Calculate CGPA</button>
+        <div id="cgpa-result">
+            <!-- CGPA result will be displayed here -->
+        </div>
+    </div>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+            integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+        </script>
+        <!-- Custom JavaScript -->
+        <script src="script.js"></script>
+        <script>
+            // Define variables
+            let universitySelect = document.getElementById("university");
+            let semesterSelect = document.getElementById("semester");
+            let courseNameInput = document.getElementById("course-name");
+            let creditHoursInput = document.getElementById("credit-hours");
+            let gradeSelect = document.getElementById("grade");
+            let addCourseBtn = document.getElementById("add-course-btn");
+            let courseList = document.getElementById("course-list");
+            let calculateCgpaBtn = document.getElementById("calculate-cgpa-btn");
+            let cgpaResult = document.getElementById("cgpa-result");
+            let courses = [];
+
+            // Define functions
+            function populateUniversities() {
+                // Clear previous options
+                universitySelect.innerHTML = '<option selected disabled>Select a university</option>';
+
+                // Populate with available universities
+                universitySelect.innerHTML += '<option value="University of Karachi">University of Karachi</option>';
+                universitySelect.innerHTML += '<option value="National University of Sciences and Technology">National University of Sciences and Technology</option>';
+                universitySelect.innerHTML += '<option value="Quaid-i-Azam University">Quaid-i-Azam University</option>';
+                universitySelect.innerHTML += '<option value="Lahore University of Management Sciences">Lahore University of Management Sciences</option>';
+                universitySelect.innerHTML += '<option value="Pakistan Institute of Engineering and Applied Sciences">Pakistan Institute of Engineering and Applied Sciences</option>';
+                universitySelect.innerHTML += '<option value="University of the Punjab">University of the Punjab</option>';
+                universitySelect.innerHTML += '<option value="COMSATS University Islamabad">COMSATS University Islamabad</option>';
+                universitySelect.innerHTML += '<option value="University of Engineering and Technology, Lahore">University of Engineering and Technology, Lahore</option>';
+                universitySelect.innerHTML += '<option value="National University of Computer and Emerging Sciences">National University of Computer and Emerging Sciences</option>';
+                universitySelect.innerHTML += '<option value="University of Agriculture, Faisalabad">University of Agriculture, Faisalabad</option>';
+
+                // Enable university select
+                universitySelect.disabled = false;
+            }
+
+            function populateSemesters() {
+                // Clear previous options
+                semesterSelect.innerHTML = '<option selected disabled>Select a semester</option>';
+
+                // Get selected university
+                let selectedUniversity = universitySelect.value;
+
+                // Populate with available semesters for the selected university
+                switch (selectedUniversity) {
+                    case "University of Karachi":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        break;
+                    case "National University of Sciences and Technology":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        semesterSelect.innerHTML += '<option value="9">Semester 9</option>';
+                        semesterSelect.innerHTML += '<option value="10">Semester 10</option>';
+                        break;
+                    case "Quaid-i-Azam University":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        break;
+                    case "Lahore University of Management Sciences":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        break;
+                    case "Pakistan Institute of Engineering and Applied Sciences":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        break;
+                    case "University of the Punjab":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        break;
+                    case "COMSATS University Islamabad":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        break;
+                    case "University of Engineering and Technology, Lahore":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        break;
+                    case "National University of Computer and Emerging Sciences":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        semesterSelect.innerHTML += '<option value="7">Semester 7</option>';
+                        semesterSelect.innerHTML += '<option value="8">Semester 8</option>';
+                        break;
+                    case "University of Agriculture, Faisalabad":
+                        semesterSelect.innerHTML += '<option value="1">Semester 1</option>';
+                        semesterSelect.innerHTML += '<option value="2">Semester 2</option>';
+                        semesterSelect.innerHTML += '<option value="3">Semester 3</option>';
+                        semesterSelect.innerHTML += '<option value="4">Semester 4</option>';
+                        semesterSelect.innerHTML += '<option value="5">Semester 5</option>';
+                        semesterSelect.innerHTML += '<option value="6">Semester 6</option>';
+                        break;
+                    // Add cases for other universities
+                }
+
+                // Enable semester select
+                semesterSelect.disabled = false;
+            }
+
+            function addCourse() {
+                // Get input values
+                let university = universitySelect.value;
+                let semester = semesterSelect.value;
+                let courseName = courseNameInput.value;
+                let creditHours = creditHoursInput.value;
+                let grade = gradeSelect.value;
+
+                // Create course object
+                let course = {
+                    university: university,
+                    semester: semester,
+                    courseName: courseName,
+                    creditHours: creditHours,
+                    grade: grade
+                };
+
+                // Add course to courses array
+                courses.push(course);
+
+                // Clear input fields
+                courseNameInput.value = "";
+                creditHoursInput.value = "";
+                gradeSelect.selectedIndex = 0;
+
+                // Display added courses
+                let courseListHtml = "";
+                for (let i = 0; i < courses.length; i++) {
+                    courseListHtml += "<p>" + courses[i].courseName + " - " + courses[i].creditHours + " credit hours - Grade: " + courses[i].grade + "</p>";
+                }
+                courseList.innerHTML = courseListHtml;
+            }
+
+            function calculateCgpa() {
+                // Calculate total grade points and total credit hours
+                let totalGradePoints = 0;
+                let totalCreditHours = 0;
+                for (let i = 0; i < courses.length; i++) {
+                    totalGradePoints += courses[i].creditHours * courses[i].grade;
+                    totalCreditHours += parseInt(courses[i].creditHours);
+                }
+
+                // Calculate CGPA
+                let cgpa = totalGradePoints / totalCreditHours;
+
+                // Display CGPA result
+                cgpaResult.innerHTML = "<h3>Your CGPA is " + cgpa.toFixed(2) + "</h3>";
+            }
+
+            // Add event listeners
+            populateUniversities();
+            universitySelect.addEventListener("change", populateSemesters);
+            addCourseBtn.addEventListener("click", addCourse);
+            calculateCgpaBtn.addEventListener("click", calculateCgpa);
+        </script>
+    </body>
+    </html>
+
